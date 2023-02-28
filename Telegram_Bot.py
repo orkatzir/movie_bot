@@ -16,12 +16,12 @@ TODAY_DATE=datetime.today().strftime('%Y-%m-%d')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# @bot.message_handler(func=lambda msg: True)
-# def echo_all(message):
-#     bot.reply_to(message,'hiiiii')
+
 @bot.message_handler(commands=['start', 'hello'])
 def send_welcome(message):
-    bot.send_message(message.chat.id,"ברוך הבא לבוט הקולנוע\U0001F37F\U0001F3A5\nלאיזה קולנוע תלך היום?")
+    # bot.send_message(message.chat.id,"ברוך הבא לבוט הקולנוע\U0001F37F\U0001F3A5\nלאיזה קולנוע תלך היום?")
+    bot.send_photo(message.chat.id, 'https://www.omnycontent.com/d/clips/4b5f9d6d-9214-48cb-8455-a73200038129/d67f7dc7-70ad-4bfd-8a86-a79400803cf0/6e157d90-e7b3-4315-b8f9-afa10186154f/image.jpg?t=1675726982&size=small',
+                   caption="     ברוך הבא לבוט הקולנוע\U0001F37F\U0001F3A5\nלאיזה קולנוע תלך היום?")
 
 @bot.message_handler(func=lambda msg: True)
 def echo_all(message):
