@@ -62,6 +62,7 @@ def YesPlanetScraper(theater_id,limit):
  print(theater_id+": Getting YesPlanet Info..")
  list_movie_times=[]
  list_movie_titles=[]
+ list_images=[]
  url = "https://www.planetcinema.co.il/?lang=en_GB#/buy-tickets-by-cinema?in-cinema="+theater_id+"&at="+TODAY_DATE+"&view-mode=list" #Yes Planet URL
  options = Options()
  options.add_argument('--headless')
@@ -72,6 +73,14 @@ def YesPlanetScraper(theater_id,limit):
  page = driver.page_source
  driver.quit()
  soup = BeautifulSoup(page, 'lxml')
+ 
+ 
+ jpg_results=soup.find_all('div',class_='movie-poster-container')
+ for res in jpg_results:
+    image=res.find('img',class_="img-responsive")['data-src']
+    title=res.find('img',class_="img-responsive")['alt']
+    list_images.append([title,image])
+ DF_Images=pd.DataFrame(list_images,columns=['Title','image_src'])
  results=soup.find_all('div',class_='row qb-movie')
  for movie in results:
   title=movie.find('h3','qb-movie-name').text
@@ -86,7 +95,7 @@ def YesPlanetScraper(theater_id,limit):
  DF_Movies=pd.DataFrame(list_movie_titles,columns=['Title'])
  DF_Movie_Times=pd.DataFrame(list_movie_times,columns=['Title','Type','Time'])
  DF_Movies=DF_Movies.head(limit)        
- 
+ DF_Movies=DF_Movies.merge(DF_Images,on='Title',how='left')
  print(theater_id+": Getting IMDB Info..")     
  DF_Movies['imdb_id']=DF_Movies.apply(lambda row: IMDB_id(row),axis=1)     
  DF_Movies=DF_Movies[DF_Movies['imdb_id']!='']
@@ -103,6 +112,7 @@ def YesPlanetScraper(theater_id,limit):
  
  
 if __name__ == "__main__":
+   # YesPlanetScraper('1070',5)
    for code in List_Theater:
-      YesPlanetScraper(code,11)
+      YesPlanetScraper(code,8)
       print("Saved DF'S for code "+code)
